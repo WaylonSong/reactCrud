@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CRUD Example--Add</title>
+    <!-- Author: Song -->
+     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <div id="root">
+    </div>
+    <div id="example">
+    </div>
+    <script type="text/javascript">
+    
+    var pageParas ={
+      formInit :[
+        {name:"price", placeholder:"2.00"},
+        {name:"state", placeholder:"1"},
+        {name:"email", placeholder:"100"},
+        {name:"mobile", placeholder:"13812345678"},
+        {name:"description", placeholder:"测试描述", type:"textarea"},
+        {name:"shopInfoId", value:"500dba0a-64a0-47b4-a5a8-c3e77b0eacb3"},
+        {name:"medicineId", placeholder:"a9c60f29-49ff-45fe-9761-4accdc2fd29d"}
+      ],
+      formExtend :[
+        {name:"price", alias:"价格(元)", type:"password", /*validator:{dataType:"number",notNull:true}*/},
+        {name:"mobile", alias:"手机", validator:{dataType:"mobile",notNull:true}},
+        {name:"state", alias:"状态", type:"select", options:["上架","下架"]},
+        {name:"email", alias:"库存",/*validator:{dataType:"email", minLength:"5", maxLength:"10", notNull:true}*/},
+        {name:"description", alias:"描述",validator:{notNull:true}},
+        {name:"shopInfoId", alias:"商店ID", type:"readOnly"},
+        {name:"medicineId", alias:"药品ID"}
+      ],
+      title : "添加商品表单",
+      url : "/",
+      redirectUrl : "/",
+      method : "post"
+    }  
+    
+    </script>
+    <script src="/static/commonV3.js"></script>
+    <script src="/static/editFormGenerator-bundle.js"></script>
+  </body>
+</html>
