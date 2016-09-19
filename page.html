@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CRUD Example--Edit</title>
+     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Author: Song -->
+  </head>
+  <body>
+    <div id="root">
+    </div>
+    <div id="example">
+    </div>
+    <script type="text/javascript">
+    var form_title = "XXX列表";
+    var pageNo = window.location.hash;
+    if(pageNo){
+      pageNo = pageNo.substring(1);
+    }
+    console.log("--------------"+pageNo); 
+    var pageParas = {
+      url:"/shop/list",  
+      addUrl:"/add",  
+      editUrl:"/edit",  
+      orderBy:"shopName",
+      activePage :pageNo,
+      totalPage :30,
+      pageSize :7,
+      column_filter : {
+        // "shopInfoId":"ID",
+        "shopName": "药店名称",
+        "shopAddress":"药店地址",
+        "shopTel":"药店地址",
+        "createUserName":"创建人"
+
+      },
+      column_identifier : "shopInfoId"
+    };
+    </script>
+    <script src="/static/commonV3.js"></script>
+    <script src="/static/pageListGenerator-bundle.js"></script>
+  </body>
+</html>
