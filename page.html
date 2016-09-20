@@ -1,9 +1,10 @@
+    <!-- Author: Song -->
 <!DOCTYPE html>
 <html>
   <head>
     <title>CRUD Example--Edit</title>
-     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <!-- Author: Song -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="/static/bootstrapCssWrapper-bundle.js"></script>
   </head>
   <body>
     <div id="root">
@@ -16,7 +17,6 @@
     if(pageNo){
       pageNo = pageNo.substring(1);
     }
-    console.log("--------------"+pageNo); 
     var pageParas = {
       url:"/shop/list",  
       addUrl:"/add",  

@@ -2,7 +2,7 @@ import React, {
 	Component,
 	PropTypes
 } from 'react';
-import { Pagination, Table, Button} from 'react-bootstrap';
+import { Pagination, Table, Button, Navbar, FormGroup, FormControl} from 'react-bootstrap';
 import ObjectUtil from '../util/ObjectUtil';
 
 class Row extends Component {
@@ -20,10 +20,11 @@ class Row extends Component {
     		return <td style={{verticalAlign:"middle"}}>{data[col]}</td>;
     	});
         return (
-	        <tr style={{cursor:"pointer"}} onClick={this.editRow.bind(this)}>
+	        <tr>
 	        	
 	        	<td style={{verticalAlign:"middle",textAlign:"center"}}>{this.props.rowNo}</td>
 	        	{columns}
+	        	<td style={{verticalAlign:"middle",textAlign:"center"}}><Button onClick={this.editRow.bind(this)}>编辑</Button></td>
     		{/*利用图片撑开最小高度*/}
 	        	<td style={{visibility:"hidden",width:"0px",padding:0,margin:0}}><img style={{float:"left",minHeight:"40px",visibility:"hidden"}}/></td>
 	        </tr>
@@ -32,27 +33,6 @@ class Row extends Component {
 }
 
 class PageList extends Component {
-
-	componentDidMount() {
-		console.log("componentDidMount");
-		this.handlePageSelect(this.state.activePage);
-	}
-	fetchList(pageNum){
-		$.ajax({
-			type: "get",
-			dataType: 'json',
-			url: this.props.url+"/"+pageNum,
-			success: function(data) {
-				this.setState({
-					rowList: data
-				});
-			}.bind(this),
-			error: function(data) {
-				alert("操作失败");
-			}
-		});
-	}
-
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -74,6 +54,25 @@ class PageList extends Component {
     	});
 	}
 
+	componentDidMount() {
+		console.log("componentDidMount");
+		this.handlePageSelect(this.state.activePage);
+	}
+	fetchList(pageNum){
+		$.ajax({
+			type: "get",
+			dataType: 'json',
+			url: this.props.url+"/"+pageNum,
+			success: function(data) {
+				this.setState({
+					rowList: data
+				});
+			}.bind(this),
+			error: function(data) {
+				alert("操作失败");
+			}
+		});
+	}
 
 	handlePageSelect(eventKey) {
 		// if(eventKey == this.state.activePage)
@@ -82,7 +81,12 @@ class PageList extends Component {
 			activePage: eventKey,
 		});
 		window.location.hash = eventKey;
-		this.fetchList(eventKey);
+		if(this.props.keyword){
+			this.fetchList(eventKey+"?q="+this.props.keyword);
+			$("input[name=q]").val(this.props.keyword);
+		}
+		else
+			this.fetchList(eventKey);
 	}
 
 
@@ -112,16 +116,35 @@ class PageList extends Component {
 			console.log(rowNo);
 
 		var rows = this.state.rowList.map(function(row){
-			// console.log(row);
 			return <Row data={row} rowNo={rowNo++} filter={that.columnKeys} identifier={identifier} editUrl={that.props.editUrl}/>
 		});
 	    return (
 	    	<div>
+	    		<form action={window.location.href.split('?')[0]}>
+	    		  <Navbar>
+				    <Navbar.Header>
+				      <Navbar.Brand>
+				        <a href="#" style={{fontSize:16}}>搜索</a>
+				      </Navbar.Brand>
+				      <Navbar.Toggle />
+				    </Navbar.Header>
+				    <Navbar.Collapse>
+				      <Navbar.Form pullLeft>
+				        <FormGroup >
+				          <FormControl type="text" name="q" placeholder="Search" defaultValue={this.props.keyword}/>
+				        </FormGroup>
+				        {' '}
+				        <Button type="submit" >提交</Button>
+				      </Navbar.Form>
+				    </Navbar.Collapse>
+				  </Navbar>
+	    		</form>
 	    		  <Table  striped bordered condensed hover>
 			        <thead>
 			          <tr>
 			          	<th style={{textAlign:"center"}}>序号</th>
 			            {this.vhs}
+			          	<th style={{textAlign:"center"}}>操作</th>
 			          </tr>
 			        </thead>
 			        <tbody>

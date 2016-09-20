@@ -3,8 +3,6 @@ import ReactDOM from 'react-dom'
 import PageList from './components/PageList'
 import ObjectUtil from './util/ObjectUtil'
 import { Grid, Row, Col, Clearfix, Panel} from 'react-bootstrap'
-require("./lib/bootstrap-theme.min.css")
-require("./lib/bootstrap.min.css")
 
 ReactDOM.render(
 	<Grid>
@@ -18,7 +16,7 @@ ReactDOM.render(
 	    </Row>
     </Grid>
 	, document.getElementById("root"));
-const rootRow = $('#tableRoot').get(0); 
+const rootRow = $('#tableRoot').get(0);
 ReactDOM.render(
 	<PageList 
 		activePage={parseInt(pageParas.activePage)} 
@@ -28,6 +26,7 @@ ReactDOM.render(
 		addUrl={pageParas.addUrl} 
 		columns={pageParas.column_filter} 
 		identifier={pageParas.column_identifier}
+		keyword={ObjectUtil.getQueryString("q")}
 		pageSize={pageParas.pageSize}
 		/>,
 	rootRow  
