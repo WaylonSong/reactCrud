@@ -3,8 +3,6 @@ import ReactDOM from 'react-dom'
 import EditForm from './components/EditForm'
 import ObjectUtil from './util/ObjectUtil'
 import { Grid, Row, Col, Clearfix, Panel} from 'react-bootstrap'
-require("./lib/bootstrap-theme.min.css")
-require("./lib/bootstrap.min.css")
 
 ReactDOM.render(
 	<Grid>
