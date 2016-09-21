@@ -10,7 +10,6 @@ class Row extends Component {
         super(props);
     }editRow
     editRow(e){
-    	console.log(this.props.data[this.props.identifier]);
     	window.location.href=this.props.editUrl+"/"+this.props.data[this.props.identifier]; 
     }
     render() {
@@ -37,11 +36,11 @@ class PageList extends Component {
 		super(props);
 		this.state = {
 			activePage: this.props.activePage||1,
-			totalPage: this.props.totalPage||1,
+			totalPage : 1,
+			pageSize : 10,
 			rowList:[]
 		};
 		this.curpage = this.props.activePage;
-		console.log("constructor: this.state.activePage "+this.state.activePage);
 		this.columnKeys = [];
 		this.columnValues = [];
 
@@ -55,7 +54,6 @@ class PageList extends Component {
 	}
 
 	componentDidMount() {
-		console.log("componentDidMount");
 		this.handlePageSelect(this.state.activePage);
 	}
 	fetchList(pageNum){
@@ -65,7 +63,9 @@ class PageList extends Component {
 			url: this.props.url+"/"+pageNum,
 			success: function(data) {
 				this.setState({
-					rowList: data
+					totalPage : data.totalPage,
+					pageSize : data.pageSize || 10,
+					rowList: data.data
 				});
 			}.bind(this),
 			error: function(data) {
@@ -109,11 +109,9 @@ class PageList extends Component {
 			return;
 		}
 
-		console.log("render");
 		var identifier = this.props.identifier;
 		var that = this;
-    	var rowNo = (this.state.activePage-1)*this.props.pageSize + 1;
-			console.log(rowNo);
+    	var rowNo = (this.state.activePage-1)*this.state.pageSize + 1;
 
 		var rows = this.state.rowList.map(function(row){
 			return <Row data={row} rowNo={rowNo++} filter={that.columnKeys} identifier={identifier} editUrl={that.props.editUrl}/>
