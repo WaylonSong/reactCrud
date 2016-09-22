@@ -22,16 +22,15 @@
       addUrl:"/add",  
       editUrl:"/edit",  
       orderBy:"shopName",
-      activePage :pageNo,
-      column_filter : {
-        // "shopInfoId":"ID",
-        "shopName": "药店名称",
-        "shopAddress":"药店地址",
-        "shopTel":"药店地址",
-        "createUserName":"创建人"
-
-      },
-      column_identifier : "shopInfoId"
+      activePage :parseInt(pageNo),
+      columnFilter : [
+        {name:'shopName', alias:'药店名称'},
+        {name:'shopAddress', alias:'药店地址'},
+        {name:'shopTel', alias:'药店地址'},
+        {name:'createUserName', alias:'创建人'},
+      ],
+      searchBar: true,
+      identifier : "shopInfoId"
     };
     </script>
     <script src="/static/commonV3.js"></script>

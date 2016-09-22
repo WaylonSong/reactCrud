@@ -44,9 +44,9 @@ class PageList extends Component {
 		this.columnKeys = [];
 		this.columnValues = [];
 
-		for(var key in this.props.columns){
-			this.columnKeys.push(key);
-			this.columnValues.push(this.props.columns[key]);
+		for(var key in this.props.columnFilter){
+			this.columnKeys.push(this.props.columnFilter[key].name);
+			this.columnValues.push(this.props.columnFilter[key].alias);
 		}
 		this.vhs = this.columnValues.map(function(val){
     		return <th style={{textAlign:"center"}}>{val}</th>
@@ -116,9 +116,10 @@ class PageList extends Component {
 		var rows = this.state.rowList.map(function(row){
 			return <Row data={row} rowNo={rowNo++} filter={that.columnKeys} identifier={identifier} editUrl={that.props.editUrl}/>
 		});
-	    return (
-	    	<div>
-	    		<form action={window.location.href.split('?')[0]}>
+		var searchBar = "";
+		if(this.props.searchBar){
+			searchBar = (
+				<form action={window.location.href.split('?')[0].split('#')[0]}>
 	    		  <Navbar>
 				    <Navbar.Header>
 				      <Navbar.Brand>
@@ -137,6 +138,11 @@ class PageList extends Component {
 				    </Navbar.Collapse>
 				  </Navbar>
 	    		</form>
+			);
+		}
+	    return (
+	    	<div>
+	    		 {searchBar}
 	    		  <Table  striped bordered condensed hover>
 			        <thead>
 			          <tr>

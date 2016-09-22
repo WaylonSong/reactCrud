@@ -17,17 +17,12 @@ ReactDOM.render(
     </Grid>
 	, document.getElementById("root"));
 const rootRow = $('#tableRoot').get(0);
+
 ReactDOM.render(
 	<PageList 
-		activePage={parseInt(pageParas.activePage)} 
-		totalPage={pageParas.totalPage} 
-		url={pageParas.url} 
-		editUrl={pageParas.editUrl} 
-		addUrl={pageParas.addUrl} 
-		columns={pageParas.column_filter} 
-		identifier={pageParas.column_identifier}
+		{...pageParas}
+
 		keyword={ObjectUtil.getQueryString("q")}
-		pageSize={pageParas.pageSize}
 		/>,
 	rootRow  
 )
