@@ -24,10 +24,10 @@
         {name:"medicineId", placeholder:"a9c60f29-49ff-45fe-9761-4accdc2fd29d"}
       ],
       formExtend :[
-        {name:"price", alias:"价格(元)", type:"password", /*validator:{dataType:"number",notNull:true}*/},
+        {name:"price", alias:"价格(元)", type:"password", validator:{dataType:"number",notNull:true}},
         {name:"mobile", alias:"手机", validator:{dataType:"mobile",notNull:true}},
         {name:"state", alias:"状态", type:"select", options:["上架","下架"]},
-        {name:"email", alias:"库存",/*validator:{dataType:"email", minLength:"5", maxLength:"10", notNull:true}*/},
+        {name:"email", alias:"库存",validator:{dataType:"email", minLength:"5", maxLength:"10", notNull:true}},
         {name:"description", alias:"描述",validator:{notNull:true}},
         {name:"shopInfoId", alias:"商店ID", type:"readOnly"},
         {name:"medicineId", alias:"药品ID"}

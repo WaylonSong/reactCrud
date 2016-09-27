@@ -4,11 +4,10 @@ var rootPath = "/Users/song/work/react/Mine/tools";
 
 module.exports = {
   //记着发布时候要去掉devtools否则打包很大
-  // devtool: 'cheap-module-eval-source-map',
+  // devtool: 'cheap-module-eval-source-map',  
   entry: {
     hot: 'webpack-hot-middleware/client',
-    // index: './index',
-    // test: './test',
+    bootstrapCssWrapper: './bootstrap-css',
     editFormGenerator: './editFormGenerator',
     pageListGenerator: './pageListGenerator',
   },
