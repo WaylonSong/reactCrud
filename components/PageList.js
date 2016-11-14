@@ -8,9 +8,9 @@ import ObjectUtil from '../util/ObjectUtil';
 class Row extends Component {
     constructor(props) {
         super(props);
-    }editRow
+    }
     editRow(e){
-    	window.location.href=this.props.editUrl+"/"+this.props.data[this.props.identifier]; 
+    	window.location.href=this.props.editUrl+"/"+this.props.data[this.props.identifier]+"?pn="+window.location.hash.substring(1); 
     }
     render() {
     	var filter = this.props.filter;
@@ -18,12 +18,12 @@ class Row extends Component {
     	var columns = filter.map(function(col){
     		return <td style={{verticalAlign:"middle"}}>{data[col]}</td>;
     	});
+    	if(this.props.editUrl)
+    		columns.push(<td style={{verticalAlign:"middle",textAlign:"center"}}><Button onClick={this.editRow.bind(this)}>{this.props.editButtonTitle||"处理"}</Button></td>);
         return (
 	        <tr>
-	        	
 	        	<td style={{verticalAlign:"middle",textAlign:"center"}}>{this.props.rowNo}</td>
 	        	{columns}
-	        	<td style={{verticalAlign:"middle",textAlign:"center"}}><Button onClick={this.editRow.bind(this)}>编辑</Button></td>
     		{/*利用图片撑开最小高度*/}
 	        	<td style={{visibility:"hidden",width:"0px",padding:0,margin:0}}><img style={{float:"left",minHeight:"40px",visibility:"hidden"}}/></td>
 	        </tr>
@@ -38,7 +38,8 @@ class PageList extends Component {
 			activePage: this.props.activePage||1,
 			totalPage : 1,
 			pageSize : 10,
-			rowList:[]
+			rowList:[],
+			taskState: this.props.state
 		};
 		this.curpage = this.props.activePage;
 		this.columnKeys = [];
@@ -51,6 +52,8 @@ class PageList extends Component {
 		this.vhs = this.columnValues.map(function(val){
     		return <th style={{textAlign:"center"}}>{val}</th>
     	});
+    	if(this.props.editUrl)
+			this.vhs.push(<th style={{textAlign:"center"}}>操作</th>);
 	}
 
 	componentDidMount() {
@@ -81,12 +84,22 @@ class PageList extends Component {
 			activePage: eventKey,
 		});
 		window.location.hash = eventKey;
+		var url = eventKey;
+
 		if(this.props.keyword){
-			this.fetchList(eventKey+"?q="+this.props.keyword);
+			url += "?q="+this.props.keyword;
 			$("input[name=q]").val(this.props.keyword);
 		}
-		else
-			this.fetchList(eventKey);
+		if(this.props.state){
+			if(url.lastIndexOf("?") > -1){
+				url += "&";
+			}else{
+				url += "?";
+			}
+			url += "state="+this.props.state;
+		}
+		this.fetchList(url);
+
 	}
 
 
@@ -103,19 +116,43 @@ class PageList extends Component {
 		window.location.href = this.props.addUrl;
 	}
 
-	render() {
-		
-		if(!this.state.rowList){
-			return;
-		}
+	getSelector(){
+		if(!("selector" in this.props))
+			return "";
+		var options = this.props.selector.value.map(function(option){
+			return <option value={option.value}>{option.name}</option>
+		});
+		return (<FormControl componentClass="select" placeholder="type" name={this.props.selector.name} value={this.state.taskState} onChange={this.taskStateChange.bind(this)}>
+	        {options}
+	     </FormControl>);
+	}
 
+	taskStateChange(event){
+		this.setState({
+			taskState : event.target.value
+		});
+	}
+
+	genRows(){
 		var identifier = this.props.identifier;
 		var that = this;
     	var rowNo = (this.state.activePage-1)*this.state.pageSize + 1;
 
-		var rows = this.state.rowList.map(function(row){
+		return this.state.rowList.map(function(row){
 			return <Row data={row} rowNo={rowNo++} filter={that.columnKeys} identifier={identifier} editUrl={that.props.editUrl}/>
 		});
+	}
+
+	genAddButton(){
+		if(this.props.addUrl)
+			return <Button onClick={this.directToAddPage.bind(this)} bsStyle="primary" style={{float:"right",margin:"-15px 0px 10px 0",padding:"5px 15px 5px 15px"}}>添加</Button>;
+	}
+
+	render() {
+		if(!this.state.rowList){
+			return;
+		}
+		var rows = this.genRows();
 		var searchBar = "";
 		if(this.props.searchBar){
 			searchBar = (
@@ -133,7 +170,9 @@ class PageList extends Component {
 				          <FormControl type="text" name="q" placeholder="Search" defaultValue={this.props.keyword}/>
 				        </FormGroup>
 				        {' '}
-				        <Button type="submit" >提交</Button>
+				        {this.getSelector()}
+				        {' '}
+				        <Button type="submit">提交</Button>
 				      </Navbar.Form>
 				    </Navbar.Collapse>
 				  </Navbar>
@@ -148,7 +187,6 @@ class PageList extends Component {
 			          <tr>
 			          	<th style={{textAlign:"center"}}>序号</th>
 			            {this.vhs}
-			          	<th style={{textAlign:"center"}}>操作</th>
 			          </tr>
 			        </thead>
 			        <tbody>
@@ -168,9 +206,10 @@ class PageList extends Component {
 			        onSelect={this.handlePageSelect.bind(this)} 
 			        style={{marginTop:"-15px"}}
 			        />
-			      <Button onClick={this.directToAddPage.bind(this)} bsStyle="primary" style={{float:"right",margin:"-15px 0px 10px 0",padding:"5px 15px 5px 15px"}}>添加</Button>
+			      {this.genAddButton()}
 	        </div>
 	    );
 	  }
 }
 export default PageList;
+export {Row};

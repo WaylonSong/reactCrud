@@ -2,139 +2,10 @@ import React, {
 	Component,
 	PropTypes
 } from 'react';
-import { Button, FormGroup, FormControl, ControlLabel, Input, Col, HelpBlock, Modal} from 'react-bootstrap';
+import {Button, FormGroup, FormControl, ControlLabel, Input, Col, HelpBlock, Modal, Checkbox} from 'react-bootstrap';
 import ObjectUtil from '../util/ObjectUtil';
-
-class EditFormGroup extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-        	"validateState" : "unkown",
-        }
-    }
-    validate(e){
-    	this.validateByValue(e.target.value);
-    }
-
-    validateByValue(value){
-    	if(!this.props.validator)
-    		return true;
-		var properties = {
-    		"errorMessage" :"",
-    		"validateState" : ""
-    	};
-    	if(this.props.validator.notNull == true){
-    		if($.trim(value)===""){
-				properties["validateState"] = 'error';
-    			properties["errorMessage"] = '字段不能为空';
-    		}
-    	}
-    	
-    	if(this.props.validator.dataType){
-    		switch(this.props.validator.dataType){
-    			case "number":
-    				if((!value=="")&&!$.isNumeric(value)){
-    					properties["validateState"] = 'error';
-    					properties["errorMessage"] = '请填写数字';
-    				}
-    				break;
-    			case "email":
-    				var reg = /.*@.+\..+/;
-    				if((!value=="")&&!reg.test(value)){
-						properties["validateState"] = 'error';
-						properties["errorMessage"] = '请填写正确邮箱格式';
-    				}
-    				break;
-    			case "mobile":
-    			console.log(value.length);
-    				if((value!="") && (value.length!=11 || !$.isNumeric(value))){
-    					properties["validateState"] = 'error';
-    					properties["errorMessage"] = '请填写正确的手机号码';
-    				}
-    				break;
-    		
-    		}
-    	}
-    	var minLength,maxLength;
-    	if(minLength = this.props.validator.minLength){
-    		if(value && value.length < minLength){
-				properties["validateState"] = 'error';
-    			properties["errorMessage"] = '字段最小长度应大于'+minLength;
-    		}
-    	}
-    	if(maxLength = this.props.validator.maxLength){
-    		if(value && value.length > maxLength){
-				properties["validateState"] = 'error';
-    			properties["errorMessage"] = '字段最大长度不能大于'+maxLength;
-    		}
-    	}
-    	properties["value"] = value;
-    	this.setState(properties);
-    	return properties.validateState == "";
-    }
-
-    render() {
-    	var type = this.props.type;
-    	var propsExt = {
-    		placeholder : this.props.placeholder,
-    		defaultValue : this.props.value,
-    		name : this.props.name,
-    		type : type,
-    		style: {marginTop:"5px"}
-    	};
-	    var value = "defaultValue";
-	    var options;
-		var style = {overflow: "hidden", margin: "10px 0" }
-		var hidden = "";
-	    if(type){
-			switch (type) {
-				case "delete":
-					return null;
-					break;
-				case "textArea":
-				case "textarea":
-					propsExt["componentClass"] = "textarea";
-					break;
-				case "readOnly":
-					propsExt["value"] =  propsExt["defaultValue"];
-					delete propsExt["defaultValue"];
-					propsExt["readOnly"] = true;
-					break;
-				case "hidden":
-					style["display"] = "none";
-					propsExt["type"] = "hidden";
-					break;
-				case "select":
-	    			propsExt["componentClass"] = "select";
-					options = this.props.options.map(function(option,index){
-						return <option value={option}>{option}</option>;
-					});
-					break;
-			}
-	    }else{
-	    	propsExt["type"] = "text";
-	    }
-	    var notNullTag = "";
-	    if(this.props.validator){
-	    	if(this.props.validator.notNull)
-	    		notNullTag = "* "
-	    }
-        return (
-	        <FormGroup bgSize="lg" controlId={this.props.id} style={style} validationState={this.state.validateState}>
-		      <Col sm={2} style={{textAlign:"right",paddingTop:"10px"}} componentClass={ControlLabel}>
-		        {notNullTag}{this.props.alias||this.props.name} 
-		      </Col> 
-		      <Col sm={10}>
-		        <FormControl  {...propsExt} onChange={this.validate.bind(this)}>
-		        	{options}
-		        </FormControl>
-		        <HelpBlock>{this.state.errorMessage}</HelpBlock>
-		        <FormControl.Feedback style={{right:"15px",top:"4px"}}/>
-		      </Col>
-		    </FormGroup>
-        );
-    }
-}
+import DateUtil from '../util/DateUtil';
+import {SimpleRow, SelectGroup} from './EditableRow'
 
 class EditForm extends Component {
 	constructor(props) {
@@ -147,17 +18,18 @@ class EditForm extends Component {
 	}
 	componentDidMount() {
 		if(this.props.method == "put"){
+			var that = this;
 			$.ajax({
 			    type: "get",
 			    dataType: 'json',
 			    url: this.props.url,
 			    success: function(data){
-			    	var formInit = ObjectUtil.dataToArray(data);
+			    	var formInit = ObjectUtil.fillFormInit(data, this.props.formInit);
 					ObjectUtil.mergeData(formInit, this.props.formExtend);
 					this.setState({data: formInit, modalMethod:"alert", modalShow: false, modalMessage: "操作成功"});
 			    }.bind(this),
 			    error: function(data){
-			        this.setState({ modalShow: false, modalMethod:"alert", modalMessage: "操作失败"});
+			        that.setState({ modalShow: false, modalMethod:"alert", modalMessage: "操作失败"});
 			    }
 			});
 
@@ -178,7 +50,6 @@ class EditForm extends Component {
 	        msg = data.message || "操作失败";
 	    }
 	    states["modalMessage"] = msg;
-	    console.log(states);
 		this.setState(states);
 	}
 	
@@ -204,12 +75,12 @@ class EditForm extends Component {
 	}
 
 	dataWrap(){
-		let nameValueArray = $("form").serializeArray();	
-		var result = {};
-		for(var item in nameValueArray) {
-			result[nameValueArray[item].name] = nameValueArray[item].value;
+		var data = {};
+		var cRefs = this.refs;
+		for(var index in cRefs){
+			Object.assign(data, cRefs[index].getResult());
 		}
-		return result;
+		return data;
 	}
 
 	confirm(){
@@ -221,7 +92,6 @@ class EditForm extends Component {
 	}
 	closeModal(){
     	this.setState({ modalShow: false});
-    	console.log(this.props.redirectUrl);
     	if(this.state.redirectFlag){
     		if(this.props.redirectUrl)
 	    		window.location = this.props.redirectUrl;
@@ -237,11 +107,7 @@ class EditForm extends Component {
 		var cRefs = this.refs;
 		var flag = true;
 		for(var index in cRefs){
-			var cState = cRefs[index].state;
-			if(cState.validateState == "error"){
-				flag = false;
-			}
-			if(cState.validateState == "unkown" && !cRefs[index].validateByValue(cState.value)){
+			if(cRefs[index].validate() == false){
 				flag = false;
 			}
 		}
@@ -250,21 +116,35 @@ class EditForm extends Component {
 
 
 	delete(){
-		var list = this.dataWrap();
-		this.ajaxSubmit("delete", this.props.url, list);
+		var data = this.dataWrap();
+		this.ajaxSubmit("delete", this.props.url, data);
 	}
-	render() {
-		var buttons, modalButtons;
+
+	genRows(data){
+		return data.map(function(row){
+			if(row.selectGroup){
+				return <SelectGroup ref={row.name} {...row}/>
+			}
+    		return <SimpleRow ref={row.name} {...row}/> 
+    	});
+	}
+	//defaut add / modify
+	genButtons(){
 		if(this.props.method == "put"){
-			buttons = <div>
+			return(<div>
 				<Button onClick={() => this.setState({ modalShow: true, modalMessage:"确认修改?", modalMethod:"update"})} 
 					bsStyle="primary" style={{marginTop:"10px"}}>修改</Button>
 				<Button onClick={() => this.setState({ modalShow: true, modalMessage:"确认删除?", modalMethod:"delete"})} 
 					style={{margin:"10px 0 0 20px"}}>删除</Button>
-				</div>;
+				</div>);
 		}else{
-			buttons = <div><Button onClick={this.submit.bind(this)} bsStyle="primary" style={{marginTop:"10px",padding:"5px 20px 5px 20px"}}>添加</Button></div>;
+			return(<div><Button onClick={this.submit.bind(this)} bsStyle="primary" style={{marginTop:"10px",padding:"5px 20px 5px 20px"}}>添加</Button></div>);
 		}
+	}
+
+	render() {
+		var buttons, modalButtons;
+		buttons = this.genButtons();
 		if(this.state.modalMethod == "alert"){
 			modalButtons = <Button onClick={this.closeModal.bind(this)}>关闭</Button>;
 		}else{
@@ -274,9 +154,8 @@ class EditForm extends Component {
 		var data = this.state.data;
 		if(!data)
 			return <div>loading...</div>;
-		var rows = data.map(function(row){
-    		return <EditFormGroup ref={row.name} {...row}/> 
-    	});
+		var rows = this.genRows(data);
+
 		return (
 			<form >
 				{rows}

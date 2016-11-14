@@ -10,7 +10,15 @@ class SimpleRow extends Component {
     constructor(props) {
         super(props);
         this.result = {};
-        var data = {name:this.props.name, value:this.props.value, validateState:"unknown"};
+        var validateState = "unknown";
+        if(!this.props.validator){
+        	validateState = "";
+        }
+        var data = {name:this.props.name, value:this.props.value, validateState:validateState};
+        if(this.props.type == "select")
+            data.value = data.value || this.props.options[0];
+        if(this.props.type == "checkbox")
+            data.value = data.value || 0;
         this.state = {
         	"data" : data
         };
@@ -31,6 +39,10 @@ class SimpleRow extends Component {
     }
 
     changeValue(event){
+        if(this.props.onChange){
+            this.props.onChange(event);
+            return;
+        }
     	var data2 = this.state.data;
     	data2["value"] = event.target.value;
     	this.validateAndSetState(data2);
@@ -39,6 +51,10 @@ class SimpleRow extends Component {
     onCheck(event){
     	var data2 = this.state.data;
     	data2["value"] = event.target.checked;
+        if(data2["value"])
+            data2["value"] = 1;
+        else
+            data2["value"] = 0;
     	this.setState({
     		"data" : data2
     	});
@@ -75,6 +91,13 @@ class SimpleRow extends Component {
     					properties["errorMessage"] = '请填写数字';
     				}
     				break;
+                case "location":
+                    var reg = /.*[省市区县].*/;
+                    if((!value=="")&&!reg.test(value)){
+                        properties["validateState"] = 'error';
+                        properties["errorMessage"] = '请填写正确单位信息，需包含省、市、区或县等关键词';
+                    }
+                    break;
     			case "email":
     				var reg = /.*@.+\..+/;
     				if((!value=="")&&!reg.test(value)){
@@ -149,6 +172,9 @@ class SimpleRow extends Component {
 					if(this.props.value == "1" || this.props.value == 1 || this.props.value == true){
 						checked["checked"] = "true";
 					}
+					if(this.props.readOnly){
+						checked["disabled"] = "disabled"
+					}
 					return (
 				      	<FormGroup bgSize="lg" controlId={this.props.id} style={style} validationState={this.state.data.validateState}>
 						      <Col sm={2} style={{textAlign:"right",paddingTop:"10px"}} componentClass={ControlLabel}>
@@ -207,6 +233,41 @@ class SimpleRow extends Component {
     }
 }
 
+class SelectGroup extends Component {
+    validate(){
+        return true;
+    }
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            categoryTwoOptions : this.props.selector.categoryTwo[this.props.selectGroup[0].value||"组长"],
+            data : {category:this.props.selectGroup[0].value||"组长", categoryTwo:this.props.selectGroup[1].value||"注射剂"}
+        }
+    }
+    getResult(){
+        return this.state.data;
+    }
+    change(event){
+        this.setState({
+            categoryTwoOptions:this.props.selector.categoryTwo[event.target.value],
+            data:{category:event.target.value, categoryTwo:this.props.selector.categoryTwo[event.target.value][0]}
+        });
+    }
+    changeTwo(event){
+        this.setState({
+            data:{category:this.state.data["category"], categoryTwo:event.target.value}
+        });
+    }
+    render(){
+        return (<div><SimpleRow name={this.props.selectGroup[0].name} alias={this.props.selectGroup[0].alias} 
+            value={this.state.data.category} options={this.props.selector.category} type="select" onChange={this.change.bind(this)}/>
+            <SimpleRow name={this.props.selectGroup[1].name} alias={this.props.selectGroup[1].alias} 
+            value={this.state.data.categoryTwo} options={this.state.categoryTwoOptions} onChange={this.changeTwo.bind(this)} type="select"/></div>
+        );
+    }
+}
+
 class SelectAddableRow extends SimpleRow {
 	constructor(props) {
         super(props);
@@ -217,10 +278,9 @@ class SelectAddableRow extends SimpleRow {
     }
     componentDidMount(props) {
 		var array = [];
-        array.push({value:this.props.value, type:this.props.selector[0], validateState:""});
+        array.push({value:this.props.value, type:this.props.selectorValue||this.props.category||this.props.type||this.props.selector[0], validateState:""});
         var data = {name:this.props.name};
         data["value"] = array;
-        // console.log(data);
         this.setState({
         	"data" : data
         });
@@ -338,4 +398,36 @@ class SelectAddableRow extends SimpleRow {
     }
 }
 
-export {SimpleRow, SelectAddableRow};
+class TypeValuePairRow extends SelectAddableRow{
+	componentDidMount(props) {
+    }
+	render(){
+    	// var type = this.props.type||this.props.category;
+		var style = {overflow: "hidden", margin: "10px 0" }
+	    var notNullTag = "";
+	    var that = this;
+
+    	var formGroupList = this.props.value.map(function(group, index){
+            return (
+		        <FormGroup bgSize="lg" controlId={that.props.id} style={style} validationState={group.validateState}>
+			      <Col sm={2} style={{textAlign:"right",marginTop:"10px"}} componentClass={ControlLabel}>
+			      {group.category}
+			      </Col>
+			      <Col sm={4} style={{textAlign:"right", paddingTop:"5px"}} componentClass={ControlLabel}>
+			      	<FormControl  value={group.categoryTwo} readOnly="true" type="text">
+				    </FormControl>
+			      </Col> 
+			      <Col sm={6} style={{textAlign:"left",marginTop:"5px"}}>
+			        <FormControl  value={group.num} readOnly="true" type="text">
+			        </FormControl>
+			      </Col>
+			    </FormGroup>
+	        );
+	    });
+    	return (
+    		<div>{formGroupList}</div>
+    	);
+	}
+}
+
+export {SimpleRow, SelectAddableRow, TypeValuePairRow, SelectGroup};
