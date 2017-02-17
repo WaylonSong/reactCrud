@@ -8,6 +8,7 @@ import ModalDialog from '../components/ModalDialog';
 import {TaskDtoD3, TaskDtoD2} from './TaskDtoForm'
 import ObjectUtil from '../util/ObjectUtil'
 import ExpertList from './ExpertListDepEdit'
+import TasklogList from './TasklogList'
 
 
 class TaskExpertList extends Component{
@@ -52,7 +53,7 @@ class TaskExpertList extends Component{
             data["taskId"] = this.props.taskId;
             data["expertsIdList"] = this.refs["expertList"].getSelectedRows();
             if(data["expertsIdList"].length == 0){
-                alert("更换列表不能为空！");
+                alert("更换列表和变更理由不能为空！");
                 return;
             }
             $.ajax({
@@ -116,7 +117,7 @@ class TaskExpertList extends Component{
 
     genButtons(taskState){
         if(taskState == "已完成"){
-            ReactDOM.render(<div style={{textAlign:"center",marginBottom:"100px"}}><Button bsStyle="warning" onClick={this.alter.bind(this)}>变更请求</Button>
+            ReactDOM.render(<div className="noprint" style={{textAlign:"center"}}><Button bsStyle="warning" onClick={this.alter.bind(this)}>变更请求</Button>
                &nbsp;&nbsp;&nbsp;<Button bsStyle="danger" onClick={this.cancel.bind(this)}>取消任务</Button></div>,
                document.getElementById('buttons'));
         }
@@ -137,19 +138,30 @@ class TaskExpertList extends Component{
         return (<ExpertList ref="expertList" taskState={this.state.taskState} taskExpertsUrl={this.props.taskExpertsUrl} department={this.props.department}/>);
     }
 
+    printme(){
+        // document.body.innerHTML=$($('.page')[0]).html()+$($('.page')[1]).html()+$($('.page')[2]).html();
+        window.print(); 
+    }
+
     render() {
         return (
-        	<Grid>
+        	<Grid className="section-to-print">
 			    <Row className="show-grid">
 				  <Col lg={8} md={8}>
-				  	<Panel header={this.props.title}>
+                    <a href="#" target="_self"   className="noprint" style={{float:"right",margin:"12px"}}  onClick={this.printme.bind(this)}>打印</a>
+                    <Panel header={this.props.title}>
 				  		{this.genTaskDto()}
                         <div id="genExpertsBtn" style={{textAlign:"center", display:this.state.genButtonDisabled}}></div>
 				    </Panel>
 				  </Col>
                   <Col md={10}>
-                    <div id="expertListDiv">{this.genExpertList()}</div>
+                    <div id="expertListDiv" style={{fontSize:"10px"}}>{this.genExpertList()}</div>
                     <div id="buttons" style={{textAlign:"center"}}></div>
+                  </Col>
+
+                  <Col md={10} style={{marginTop:"20px"}}>
+                    <div id="changeLogList" style={{textAlign:"center",fontSize:"15px",paddingBottom:"5px",/*border: "1px solid #ddd", width:"100%"*/}}>变更日志</div>
+                    <TasklogList tasklogUrl={"/tasklog/taskId/"+this.props.taskId}/>
                   </Col>
 
 			    </Row>

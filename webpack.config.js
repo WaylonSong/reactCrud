@@ -16,7 +16,10 @@ module.exports = {
     dTaskExpertsEditGen: './entry/dTaskExpertsEditGen',
     pageListGenerator: './entry/pageListGenerator',
     dqListGenerator: './entry/dqListGenerator',
-    dqTaskExpert:"./entry/dqTaskExpert"
+    invoiceListGenerator: './entry/invoiceListGenerator',
+    dqTaskExpert:"./entry/dqTaskExpert",
+    standardRespFormGenerator:"./entry/standardRespFormGenerator",
+    reimburseFormGenerator:"./entry/reimburseFormGenerator",
   },
 
   output: {
@@ -38,7 +41,7 @@ module.exports = {
     //会合并大小小于\d b的chunk，但至少会有一个 不会合并到parent中
     new webpack.optimize.MinChunkSizePlugin({minChunkSize: 1000}),
     new webpack.optimize.CommonsChunkPlugin("commonV3.js",["editFormGenerator", "pageListGenerator", "d2EditFormGenerator", "d2TaskExpertsGen", 
-      "d3EditFormGenerator", "d3TaskExpertsGen", "dTaskExpertsEditGen", "dqListGenerator", "dqTaskExpert"]),
+      "d3EditFormGenerator", "d3TaskExpertsGen", "dTaskExpertsEditGen", "dqListGenerator", "dqTaskExpert", "standardRespFormGenerator", "invoiceListGenerator","reimburseFormGeneratore"]),
     new webpack.optimize.UglifyJsPlugin({compress:{warnings:false}})
   ],
   module: {

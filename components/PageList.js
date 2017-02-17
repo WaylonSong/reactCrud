@@ -20,8 +20,14 @@ class Row extends Component {
     	});
     	if(this.props.editUrl)
     		columns.push(<td style={{verticalAlign:"middle",textAlign:"center"}}><Button onClick={this.editRow.bind(this)}>{this.props.editButtonTitle||"处理"}</Button></td>);
+        var className;
+        if(data["state"] == "处理中"){
+        	className = "danger";
+        }else if(data["state"] == "变更中"){
+        	className = "warning";
+        }
         return (
-	        <tr>
+	        <tr className={className}>
 	        	<td style={{verticalAlign:"middle",textAlign:"center"}}>{this.props.rowNo}</td>
 	        	{columns}
     		{/*利用图片撑开最小高度*/}
@@ -77,26 +83,26 @@ class PageList extends Component {
 		});
 	}
 
-	handlePageSelect(eventKey) {
+	handlePageSelect(activePage) {
 		// if(eventKey == this.state.activePage)
 		// 	return;
 		this.setState({
-			activePage: eventKey,
+			activePage: activePage,
 		});
-		window.location.hash = eventKey;
-		var url = eventKey;
-
+		window.location.hash = activePage;
+		var url = ""+activePage;
 		if(this.props.keyword){
 			url += "?q="+this.props.keyword;
 			$("input[name=q]").val(this.props.keyword);
 		}
-		if(this.props.state){
+
+		if(this.state.taskState){
 			if(url.lastIndexOf("?") > -1){
 				url += "&";
 			}else{
 				url += "?";
 			}
-			url += "state="+this.props.state;
+			url += "state="+this.state.taskState;
 		}
 		this.fetchList(url);
 
@@ -137,10 +143,13 @@ class PageList extends Component {
 		var identifier = this.props.identifier;
 		var that = this;
     	var rowNo = (this.state.activePage-1)*this.state.pageSize + 1;
-
-		return this.state.rowList.map(function(row){
-			return <Row data={row} rowNo={rowNo++} filter={that.columnKeys} identifier={identifier} editUrl={that.props.editUrl}/>
-		});
+    	if(this.state.rowList){
+    		return this.state.rowList.map(function(row){
+				return <Row data={row} rowNo={rowNo++} filter={that.columnKeys} identifier={identifier} editUrl={that.props.editUrl}/>
+			});
+    	}else{
+    		return "数据列表为空！";
+    	}
 	}
 
 	genAddButton(){

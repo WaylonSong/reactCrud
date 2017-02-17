@@ -1,0 +1,42 @@
+    <!-- Author: Song -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CRUD Example--Edit</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="/js/bootstrapCssWrapper-bundle.js"></script>
+  </head>
+  <body>
+    <div id="root">
+    </div>
+    <div id="example">
+    </div>
+    <script type="text/javascript">
+    var form_title = "XXX列表";
+    var pageNo = window.location.hash;
+    if(pageNo){
+      pageNo = pageNo.substring(1);
+    }
+
+    var pageParas = {
+      url:"/rest/invoice/list",  
+      // orderBy:"shopName",
+      columnFilter : [
+        {name:'number', alias:'发票编号'},
+        {name:'history', alias:'交易历史'},
+        {name:'buyerId', alias:'公司名称'},
+        {name:'sellerId', alias:'来源'},
+        {name:'status', alias:'状态'},
+        // {name:'source', alias:'来源科室'},
+        // {name:'state', alias:'任务状态'},
+        // {name:'createUserName', alias:'创建人'},
+      ],
+      pageType: "sortList",
+      searchBar: true,
+      // identifier : "taskId",
+    };
+    </script>
+    <script src="/js/commonV3.js"></script>
+    <script src="/js/pageListGenerator-bundle.js"></script>
+  </body>
+</html>

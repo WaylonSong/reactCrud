@@ -1,0 +1,21 @@
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .section-to-print,
+  .section-to-print * {
+    visibility: visible;
+  }
+  #header, #aside{
+    display: none;
+  }
+  /*.section-to-print {*/
+  /*position: absolute;*/
+  /*left: 0;*/
+  /*top: 0;*/
+  /*}*/
+  .noprint {
+    /*display: none;*/
+    visibility: hidden;
+  }
+}

@@ -8,31 +8,17 @@ import DateUtil from '../util/DateUtil';
 import EditForm from '../components/EditForm';
 import {SelectAddableRow, SimpleRow} from '../components/EditableRow';
 
-class SelectAddableRowD2 extends SelectAddableRow{
-	getResult(){
-    	var result = {};
-    	var array = this.state.data.value;
-    	var resultArray = [];
-    	for(var i in array){
-    		resultArray.push({num: array[i].value, categoryTwo:array[i].type});	
-    	}
-    	result[this.props.name] = resultArray;
-    	return result;
-    }
-}
-
 class EditFormD2 extends EditForm {
 
 	genRows(data){
 		var that = this;
 		return data.map(function(row){
 			if(row.group){
-				return <SelectAddableRowD2 ref={row.name} {...row} selector={that.props.selector[row.group]}/>
+				return <SelectAddableRow ref={row.name} {...row} selector={that.props.selector[row.group]}/>
 			}
     		return <SimpleRow ref={row.name} {...row}/> 
     	});
 	}
-
 }
 
 class EditFormD3 extends EditForm {
@@ -55,7 +41,6 @@ class EditFormD3 extends EditForm {
 		if(groupList){
 			result["groupList"] = groupList;
 		}
-		
 		if(result["bacteria"]){
 			result["bacteria"] = "1";
 		}else

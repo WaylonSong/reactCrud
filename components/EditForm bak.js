@@ -5,7 +5,7 @@ import React, {
 import {Button, FormGroup, FormControl, ControlLabel, Input, Col, HelpBlock, Modal, Checkbox} from 'react-bootstrap';
 import ObjectUtil from '../util/ObjectUtil';
 import DateUtil from '../util/DateUtil';
-import {SimpleRow, SelectGroup, CityValuePairRow, ComplexRow, HintInput, SelectAddableRow, SelectAddHintRow, HintGroupRow} from './EditableRow'
+import {SimpleRow, SelectGroup, CityValuePairRow, ComplexRow, HintRow, SelectAddableRow} from './EditableRow'
 
 class EditForm extends Component {
 	constructor(props) {
@@ -32,6 +32,7 @@ class EditForm extends Component {
 			        that.setState({ modalShow: false, modalMethod:"alert", modalMessage: "操作失败"});
 			    }
 			});
+
 		}else if(this.props.method == "post"){
 			var formInit = this.props.formInit;
 			ObjectUtil.mergeData(formInit, this.props.formExtend);
@@ -125,23 +126,20 @@ class EditForm extends Component {
 			if(row.selectGroup){
 				return <SelectGroup ref={row.name} {...row}/>
 			}
-			else if(row.group && row.group != "groupList"){
-				return <SelectAddableRow ref={row.name} {...row}/>
-			}	
-			else if (row.type && row.type == "hintgroup") {
-				return <SelectAddHintRow ref={row.name} {...row} selector={that.props.selector[row.group]}/>
-				//console.log("aria");
-			}			
-			else if(row.validator && row.validator.dataType && row.validator.dataType == "location"){
+			if(row.group){
+				return <SelectAddableRow ref={row.name} {...row} selector={that.props.selector[row.group]}/>
+			}
+			if(row.validator && row.validator.dataType && row.validator.dataType == "location"){
+				console.log(row.validator)
 			    return <CityValuePairRow ref={row.name} {...row}/>
 			}
-			else if(row.type && row.type == "complexRow"){
+			if(row.type && row.type == "complexRow"){
 				return <ComplexRow ref={row.name} {...row}/>
 			}
-			else if(row.type && row.type=="hint"){
-				return <HintGroupRow ref={row.name} {...row}/>
-			}else
-    			return <SimpleRow ref={row.name} {...row}/> 
+			if(row.type && row.type=="hint"){
+				return <HintRow ref={row.name} {...row}/>
+			}
+    		return <SimpleRow ref={row.name} {...row}/> 
     	});
 	}
 	//defaut add / modify

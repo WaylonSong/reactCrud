@@ -66,6 +66,7 @@ ObjectUtil.redirectOrGoBack = function(url){
 	}
 }
 
+window.ObjectUtil = ObjectUtil;
 export default ObjectUtil;
 
 

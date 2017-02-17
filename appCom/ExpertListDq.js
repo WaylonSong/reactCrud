@@ -39,6 +39,7 @@ class Expert extends Component{
     }
     render() {
     	var data = this.state.data;
+    	var reason = data["reason"] || "";
     	var columnProps = [];
     	columnProps.push(data["category"]);
     	if(this.props.department == "d2")
@@ -59,9 +60,9 @@ class Expert extends Component{
 	        	<td style={{verticalAlign:"middle",textAlign:"center"}}>{this.props.rowNo}</td>
 	        	{columns}
 		        {this.props.taskState == "生成中" || this.props.taskState == "已生成" || this.props.taskState == "变更中"?
-		        	<td style={{verticalAlign:"middle",textAlign:"center"}}><input ref='reason'/></td>:""}
+		        	<td style={{verticalAlign:"middle",textAlign:"center"}}><input ref='reason' defaultValue={reason}/></td>:""}
 		        {this.props.taskState == "生成中" || this.props.taskState == "已生成" || this.props.taskState == "变更中"?
-		        	<td style={{verticalAlign:"middle",textAlign:"center"}}><Button {...disabled}  onClick={this.changeExpert.bind(this)}>更换</Button></td>:""}
+		        	<td style={{verticalAlign:"middle",textAlign:"center"}}><Button {...disabled} style={{fontSize:"10px"}} onClick={this.changeExpert.bind(this)}>更换</Button></td>:""}
     		{/*利用图片撑开最小高度*/}
 	        	<td style={{visibility:"hidden",width:"0px",padding:0,margin:0}}><img style={{float:"left",minHeight:"40px",visibility:"hidden"}}/></td>
 	        </tr>
@@ -120,9 +121,9 @@ class ExpertListDq extends Component {
 		        <thead>
 		          <tr>
 		          	<th style={{textAlign:"center"}}>#</th>
-		          	<th style={{textAlign:"center"}}>组别</th>
+		          	<th style={{textAlign:"center",minWidth:"51px"}}>组别</th>
                     {this.props.department == "d2"?<th style={{textAlign:"center"}}>科目</th>:""}
-		          	<th style={{textAlign:"center"}}>姓名</th>
+		          	<th style={{textAlign:"center",minWidth:"51px"}}>姓名</th>
 		          	<th style={{textAlign:"center"}}>工作单位</th>
 		          	<th style={{textAlign:"center"}}>职务</th>
 		          	<th style={{textAlign:"center"}}>电话</th>

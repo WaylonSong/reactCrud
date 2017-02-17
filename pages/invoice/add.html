@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CRUD Example--Add</title>
+    <!-- Author: Song -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="/js/bootstrapCssWrapper-bundle.js"></script>
+</head>
+<body>
+<div id="root">
+</div>
+<div id="example">
+</div>
+<script type="text/javascript">
+    var date = new Date();
+    var pageParas ={
+
+        formInit :[
+            {name:"ownerMobile", alias:"持票人手机", value:""} ,
+            {name:"number", alias:"发票号"} ,
+            {name:"code", alias:"发票代码"} ,
+            {name:"date", alias:"开票日期", value:date.getFullYear()+"-"+date.getMonth()+"-"+date.getDay()} ,
+            {name:"buyer", alias:"单位信息",type:"complexRow", aliasDict:{"title":"单位全称","traderId":"单位Id", "taxId":"识别号","address":"地址"},
+              value:{"title":"","traderId":"", "address":""},
+              hiddens:{"traderId":true}},
+            {name:"itemList", alias:"商品明细", type:"complexRow", 
+              value:[{"name":"","spec":"","unit":"","quantity":"","price":"","taxRate":"","taxAmount":"","totalPrice":""}],
+              aliasDict:{"name":"名称","spec":"说明","price":"价格","quantity":"数量","taxAmount":"税费","totalPrice":"总价"}, 
+              hiddens:{"id":true,"unit":true, "taxRate":true}}
+        ],
+        formExtend :[
+        ],
+        title : "创建发票",
+        url : "/invoice",
+        redirectUrl : "/invoice/add.html",
+        method : "post"
+    }
+
+</script>
+<script src="/js/commonV3.js"></script>
+<script src="/js/standardRespFormGenerator-bundle.js"></script>
+</body>
+</html>

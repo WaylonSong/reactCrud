@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>报销申请</title>
+    <!-- Author: Song -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="/js/bootstrapCssWrapper-bundle.js"></script>
+</head>
+<body>
+<div id="root">
+</div>
+<div id="example">
+</div>
+<script type="text/javascript">
+    /*<![CDATA[*/
+    function getQueryString(name){
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if(r!=null)return  decodeURI(r[2]); return null;
+    }
+    var date = new Date();
+    var list = getQueryString("list");
+    list = list.replace("-", "\t");
+    var pageParas ={
+        formInit :[
+            {name:"companyTitle", alias:"单位名称", value:getQueryString("buyerId"), readOnly:"true"} ,
+            {name:"department", alias:"部门", value:""} ,
+            {name:"description", alias:"说明", type:"textArea"} ,
+            {name:"date", alias:"报销日期", value:date.getFullYear()+"-"+date.getMonth()+"-"+date.getDay()} ,
+            {name:"invoiceNumberList", alias:"发票列表", type:"textArea", value:list, readOnly:"true"} ,
+        ],
+        formExtend :[
+        ],
+        title : "发票报销单",
+        url : "/rest/reimburse",
+        redirectUrl : "/invoice/list",
+        method : "post"
+    }
+    /*]]>*/
+</script>
+<script src="/js/commonV3.js"></script>
+<script src="/js/standardRespFormGenerator-bundle.js"></script>
+</body>
+</html>

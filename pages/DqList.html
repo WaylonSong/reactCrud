@@ -1,0 +1,42 @@
+    <!-- Author: Song -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CRUD Example--Edit</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="/js/bootstrapCssWrapper-bundle.js"></script>
+  </head>
+  <body>
+    <div id="root">
+    </div>
+    <div id="example">
+    </div>
+    <script type="text/javascript">
+    var form_title = "任务列表";
+    var pageNo = window.location.hash;
+    if(pageNo){
+      pageNo = pageNo.substring(1);
+    }
+
+    var pageParas = {
+      url:"/dq/list",  
+      editUrl:"/dq/task/",  
+      // orderBy:"shopName",
+      activePage :parseInt(pageNo),
+      columnFilter : [
+        {name:'inspectionUnit', alias:'单位名称'},
+        {name:'executionTime', alias:'检查时间'},
+        {name:'source', alias:'来源科室'},
+        {name:'state', alias:'任务状态'},
+        // {name:'createUserName', alias:'创建人'},
+      ],
+      searchBar: true,
+      identifier : "taskId",
+      selector :{"name":"state", "value":[{"value":"all", "name":"全部类型"}, {"value":"处理中", "name":"处理中"}, {"value":"已生层", "name":"已生成"}, {"value":"已完成", "name":"已完成"}, {"value":"变更中", "name":"变更中"}, {"value":"已取消", "name":"已取消"}]
+      }
+    };
+    </script>
+    <script src="/js/commonV3.js"></script>
+    <script src="/js/dqListGenerator-bundle.js"></script>
+  </body>
+</html>

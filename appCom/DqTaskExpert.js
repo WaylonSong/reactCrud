@@ -26,7 +26,7 @@ class DqTaskExpert extends TaskExpertList{
 	genButtons(taskState){
         //只有在dq中才有生成专家列表按钮
         if(taskState == "处理中"){
-            ReactDOM.render(<Button onClick={() => {this.fireGenExperts()}}
+            ReactDOM.render(<Button className="noprint" onClick={() => {this.fireGenExperts()}}
                 bsStyle="primary" style={{marginTop:"10px"}}>生成专家列表</Button>,
                	document.getElementById('genExpertsBtn'));
         }

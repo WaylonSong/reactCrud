@@ -36,7 +36,10 @@ class Expert extends Component{
 	        <tr>
 	        	<td style={{verticalAlign:"middle",textAlign:"center"}}>{this.props.rowNo}</td>
 	        	{columns}
-	        	<td style={{verticalAlign:"middle",textAlign:"center"}}><Checkbox onClick={this.check.bind(this)}></Checkbox></td>
+                {this.props.taskState == "已完成"?
+                    <td style={{verticalAlign:"middle",textAlign:"center"}}><input ref='reason'/></td>:""}
+	        	{this.props.taskState == "已完成"?
+                    <td style={{verticalAlign:"middle",textAlign:"center"}}><Checkbox onClick={this.check.bind(this)}></Checkbox></td>:""}
     		{/*利用图片撑开最小高度*/}
 	        	<td style={{visibility:"hidden",width:"0px",padding:0,margin:0}}><img style={{float:"left",minHeight:"40px",visibility:"hidden"}}/></td>
 	        </tr>
@@ -73,7 +76,10 @@ class ExpertList extends Component {
         var result = [];
         for(var row in this.refs){
             if(this.refs[row].state.check == true){
-                result.push(this.refs[row].props.data["expertsId"]);
+                result.push({"id":this.refs[row].props.data["expertsId"], "reason":this.refs[row].refs["reason"].value});
+                if(this.refs[row].refs["reason"].value == ""){
+                    return [];
+                }
             }
         }
         return result;
@@ -83,24 +89,25 @@ class ExpertList extends Component {
         var data = this.state.data;
         var that = this;
         var rows = data.map(function(row, index){
-            return <Expert data={row} rowNo={index+1} ref={"row"+index} department={that.props.department}/>
+            return <Expert data={row} rowNo={index+1} ref={"row"+index} taskState={that.props.taskState} department={that.props.department}/>
         });
         var th;
         if(this.props.department == "d2"){
-            th = <th style={{textAlign:"center"}}>科目</th>;
+            th = <th style={{textAlign:"center",minWidth:"51px"}}>科目</th>;
         }
         return (
             <Table  striped bordered condensed hover>
                 <thead>
                   <tr>
                     <th style={{textAlign:"center"}}>#</th>
-                    <th style={{textAlign:"center"}}>组别</th>
+                    <th style={{textAlign:"center",minWidth:"51px"}}>组别</th>
                     {th}
-                    <th style={{textAlign:"center"}}>姓名</th>
+                    <th style={{textAlign:"center",minWidth:"51px"}}>姓名</th>
                     <th style={{textAlign:"center"}}>工作单位</th>
                     <th style={{textAlign:"center"}}>职务</th>
                     <th style={{textAlign:"center"}}>电话</th>
-                    <th style={{textAlign:"center"}}>需要更换</th>
+                    {this.props.taskState == "已完成"?<th style={{textAlign:"center"}}>理由</th>:""}
+                    {this.props.taskState == "已完成"?<th style={{textAlign:"center",minWidth:"40px"}}>选择</th>:""}
                   </tr>
                 </thead>
                 <tbody>

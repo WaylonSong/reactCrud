@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CRUD Example--Add</title>
+    <!-- Author: Song -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="/js/bootstrapCssWrapper-bundle.js"></script>
+  </head>
+  <body>
+    <div id="root">
+    </div>
+    <div id="example">
+    </div>
+    <script type="text/javascript">
+    var id = window.location.pathname.substring(window.location.pathname.lastIndexOf("/")+1);
+    var url = "/d3/experts/"+id;
+    var pageParas ={
+      formInit :[
+        {name:"inspectionUnit", placeholder:"单位名称"},
+        {name:"source", value:"三科"},
+        {name:"leaderNum", value:"1"},
+        {name:"bacteria"},
+        {name:"state", alias:"状态"},
+        {name:"生产组人数", group:"groupList"},
+        {name:"质量组人数", group:"groupList"},
+        {name:"executionTime", placeholder:"2016-01-01"}
+      ],
+      formExtend :[
+        {name:"inspectionUnit", alias:"被检单位"},
+        {name:"bacteria", alias:"无菌要求", type:"checkbox"},
+        {name:"source", alias:"科室"},
+        {name:"leaderNum", alias:"组长人数"},
+        {name:"executionTime", alias:"检查时间"},
+      ],
+      title : "添加商品表单",
+      url : url,
+      redirectUrl : "/d3/list",
+      alterUrl : "/d3/task/change/"+id,
+      cancelUrl : "/d3/task/change/"+id,
+      taskExpertsUrl : "/d3/task/experts/"+id,
+      method : "put",
+      button : "none",
+      department : "d3",
+      taskId : id
+    }  
+    
+    
+    </script>
+    <script src="/js/commonV3.js"></script>
+    <script src="/js/dTaskExpertsEditGen-bundle.js"></script>
+  </body>
+</html>

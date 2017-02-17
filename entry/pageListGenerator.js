@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import PageList from '../components/PageList'
+import SortList from '../components/SortList'
 import ObjectUtil from '../util/ObjectUtil'
 import { Grid, Row, Col, Clearfix, Panel} from 'react-bootstrap'
 
@@ -17,14 +18,10 @@ ReactDOM.render(
     </Grid>
 	, document.getElementById("root"));
 const rootRow = $('#tableRoot').get(0);
-console.log(ObjectUtil.getQueryString("state"))
-ReactDOM.render(
-	<PageList 
-		{...pageParas}
 
-		keyword={ObjectUtil.getQueryString("q")} 
-		state={ObjectUtil.getQueryString("state")}
-
-		/>,
-	rootRow  
-)
+if(pageParas.pageType && pageParas.pageType == "sortList"){
+	ReactDOM.render(<SortList {...pageParas} keyword={ObjectUtil.getQueryString("q")} state={ObjectUtil.getQueryString("state")}/>,rootRow);
+}
+else{
+	ReactDOM.render(<PageList {...pageParas} keyword={ObjectUtil.getQueryString("q")} state={ObjectUtil.getQueryString("state")}/>,rootRow);
+}
